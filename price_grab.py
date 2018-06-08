@@ -8,15 +8,15 @@ from pandas_datareader import data
 import datetime
 
 def pricegrab(stock,period):
-    start_date = datetime.date(2017,1,12)
+    start_date = datetime.date(2012,1,12)
     end_date = datetime.date.today()
-    data_source = 'yahoo'
+    data_source = 'yahoo' #download data from yahoo finance
     panel_data = data.DataReader(stock, data_source, start_date, end_date)
     prices = panel_data['Close'].values
     print('loading ' + stock)
     #dtprices = signal.detrend(prices)
     time.sleep(1)
-    return prices
+    return panel_data
 
-Y = pricegrab('MSFT','1Y')
-print(Y)
+Y = pricegrab('PBR','1Y') # Petroleum Brazil stock
+Y.to_csv('price.csv')  # save csv file
