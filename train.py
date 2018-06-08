@@ -1,3 +1,0 @@
-import neat
-
-def main():

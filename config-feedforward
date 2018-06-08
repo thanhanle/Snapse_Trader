@@ -1,19 +1,16 @@
-# NEAT configuration for the bit-sequence memory experiment.
+#--- parameters for the XOR-2 experiment ---#
 
-# The `NEAT` section specifies parameters particular to the NEAT algorithm
-# or the experiment itself.  This is the only required section.
 [NEAT]
-fitness_criterion      = max
-fitness_threshold      = 1
-no_fitness_termination = True
-pop_size               = 15
-reset_on_extinction    = 0
+fitness_criterion     = max
+fitness_threshold     = 3.9
+pop_size              = 150
+reset_on_extinction   = False
 
 [DefaultGenome]
 # node activation options
 activation_default      = sigmoid
-activation_mutate_rate  = 0.025
-activation_options      = relu 
+activation_mutate_rate  = 0.0
+activation_options      = sigmoid
 
 # node aggregation options
 aggregation_default     = sum
@@ -21,7 +18,7 @@ aggregation_mutate_rate = 0.0
 aggregation_options     = sum
 
 # node bias options
-bias_init_mean          = 0.01
+bias_init_mean          = 0.0
 bias_init_stdev         = 1.0
 bias_max_value          = 30.0
 bias_min_value          = -30.0
@@ -50,7 +47,7 @@ node_delete_prob        = 0.2
 
 # network parameters
 num_hidden              = 0
-num_inputs              = 6
+num_inputs              = 2
 num_outputs             = 1
 
 # node response options
@@ -82,3 +79,4 @@ species_elitism      = 2
 [DefaultReproduction]
 elitism            = 2
 survival_threshold = 0.2
+
