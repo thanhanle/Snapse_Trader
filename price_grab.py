@@ -19,4 +19,4 @@ def pricegrab(stock,period):
     return panel_data
 
 Y = pricegrab('PBR','1Y') # Petroleum Brazil stock
-Y.to_csv('price.csv')  # save csv file
+Y.to_csv('price.csv')  # save csv file 

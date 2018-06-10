@@ -18,11 +18,19 @@ class sliding_trainer():
             self.position += self.stepsize
         else:
             self.position = self.lookback
-            return "done"
+            return "done","done"
         self.inputs = self.prices[self.position-self.lookback:self.position]
         self.testdata = self.prices[self.position-1:self.position + self.stepsize]
         return self.inputs.values, self.testdata.values
 
+#st = sliding_trainer(prices["Close"],10,50)
+#[inputs,tests] = st.slidestep()
+#print(st.slidestep())
+#print(inputs)
+#print(tests)
+
+#inputs = st.slidestep()
+#print(inputs)
 
 
 
