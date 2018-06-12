@@ -10,9 +10,6 @@ import train_window
 import numpy
 import pandas as pd
 
-# 2-input XOR inputs and expected outputs.
-#xor_inputs = [(0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0)]
-#xor_outputs = [   (0.0,),     (1.0,),     (1.0,),     (0.0,)]
 prices = pd.read_csv('price.csv')
 
 def eval_genomes(genomes, config):
@@ -54,7 +51,7 @@ def evaluation(net,prices):
     return fittness
 
 def eval_genome(genome, config):
-    net = neat.nn.FeedForwardNetwork.create(genome, config)
+    net = neat.nn.RecurrentNetwork.create(genome, config)
     fittness = evaluation(net,prices)
     return fittness
 
@@ -82,7 +79,7 @@ def run(config_file):
 
     # Show output of the most fit genome against training data.
     print('\nOutput:')
-    winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
+    winner_net = neat.nn.RecurrentNetwork.create(winner, config)
     #for xi, xo in zip(xor_inputs, xor_outputs):
     #    output = winner_net.activate(xi)
     #    print("input {!r}, expected output {!r}, got {!r}".format(xi, xo, output))
