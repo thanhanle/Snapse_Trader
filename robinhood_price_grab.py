@@ -6,10 +6,10 @@ from matplotlib import style
 
 #style.use('ggplot')
 
-start_time = dt.datetime(2017,1,12)
+start_time = dt.datetime(2012,1,12)
 end_time = dt.datetime.now()
 
-data_frame = web.DataReader('TSLA', 'robinhood', start_time, end_time)
+data_frame = web.DataReader('QQQ', 'robinhood', start_time, end_time)
 closing_prices = data_frame['close_price'].values
 
 print(closing_prices)

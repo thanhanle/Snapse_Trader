@@ -8,44 +8,38 @@ import neat
 import visualize
 import train_window
 import rand_train_window
+import multi_rand_trainer
 import numpy
 import pandas as pd
 
-# 2-input XOR inputs and expected outputs.
-#xor_inputs = [(0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0)]
-#xor_outputs = [   (0.0,),     (1.0,),     (1.0,),     (0.0,)]
-#prices = pd.read_csv('price.csv')
-prices2 = pd.read_csv('QQQ.csv')
+
+prices = [pd.read_csv('QQQ.csv')[:-500],pd.read_csv('EWY.csv')[:-500],pd.read_csv('USO.csv')[:-500]]
+test_prices = [pd.read_csv('QQQ.csv')[-500:],pd.read_csv('EWY.csv')[-500:],pd.read_csv('USO.csv')[-500:]]
 
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
         genome.fitness = eval_genome(genome, config)
-    #for genome_id, genome in genomes:
-    #    genome.fitness = 4.0
-    #    net = neat.nn.FeedForwardNetwork.create(genome, config)
-    #    for xi, xo in zip(xor_inputs, xor_outputs):
-    #        output = net.activate(xi)
-    #        genome.fitness -= (output[0] - xo[0]) ** 2
+
 
 def eval_genome(genome, config):
     #net = neat.nn.FeedForwardNetwork.create(genome, config)
     net = neat.nn.RecurrentNetwork.create(genome, config)
     #fittness = evaluation(net,prices[:-700])
-    fittness = randeval(net,prices2[:-500])
+    fittness = randeval(net,prices)
     return fittness
 
 def randeval(net,prices):
-    st = rand_train_window.sliding_trainer(prices["Close"],10,50)
+    st = multi_rand_trainer.sliding_trainer(prices,10,50)
     inputs,tests = [],[]
     startingcash = 10000
     cash = 10000
     portfolio = 0
     total = cash + portfolio
-    for i in range(5):
+    for i in range(10):
         inputs,tests = st.random_train()
         output = net.activate(inputs)
         if output[0] >= .50:
-            portfolio = total*output[0]
+            portfolio = total  #*output[0]
             cash = total - portfolio
         else:
             cash = total
@@ -59,7 +53,7 @@ def randeval(net,prices):
 
 # For normal use!!! Don't edit!!
 def evaluation(net,prices):
-    st = train_window.sliding_trainer(prices["Close"],10,50)
+    st = train_window.sliding_trainer(prices,10,50)
     inputs,tests = [],[]
     startingcash = 10000
     cash = 10000
@@ -91,7 +85,7 @@ def run(config_file):
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_file)
 
-    # Create the population, which is the top-level object for a NEAT run.
+    # Create the population, which is the top-level object [:-500]for a NEAT run.
     p = neat.Population(config)
 
     # Add a stdout reporter to show progress in the terminal.
@@ -101,7 +95,7 @@ def run(config_file):
     #p.add_reporter(neat.Checkpointer(5))
 
     # Run for up to n generations.
-    winner = p.run(eval_genomes, 300)
+    winner = p.run(eval_genomes, 100)
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
@@ -118,7 +112,7 @@ def run(config_file):
     visualize.draw_net(config, winner, True, node_names=node_names)
     visualize.plot_stats(stats, ylog=False, view=True)
     visualize.plot_species(stats, view=True)
-    print(evaluation(winner_net,prices2[-500:]))
+    print(randeval(winner_net,test_prices))
 
     #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-4')
     #p.run(eval_genomes, 10)
