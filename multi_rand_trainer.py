@@ -13,12 +13,13 @@ class sliding_trainer():
 
     def random_train(self):
         train = np.array([])
-        position = random.randint(self.lookback,len(self.prices[0])-self.lookback+self.stepsize)
+        position = random.randint(self.lookback,len(self.prices[0])-self.stepsize)
         for stock in self.prices:
             train = np.hstack([train,np.array(stock['Close'][position-self.lookback:position].values)])
             #print(train)
 
         test = self.prices[0]['Close'][position:position + self.stepsize].values
+        #print(position,test)
         #print(len(train))
         return train, test
 

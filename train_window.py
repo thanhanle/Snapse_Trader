@@ -10,28 +10,20 @@ class sliding_trainer():
         self.stepsize = stepsize
         self.lookback = lookback
         self.position = self.lookback
-        self.inputs = self.prices[self.position - self.lookback:self.position]
-        self.testdata = self.prices[self.position-1:self.position + self.stepsize]
+        #self.inputs = self.prices[self.position - self.lookback:self.position]
+        #self.testdata = self.prices[self.position-1:self.position + self.stepsize]
 
     def slidestep(self):
-        if (self.position + self.stepsize) <= len(self.prices):
+        train = np.array([])
+        if (self.position + self.stepsize) <= len(self.prices[0])-1:
             self.position += self.stepsize
         else:
             self.position = self.lookback
             return "done","done"
-        self.inputs = self.prices[self.position-self.lookback:self.position]
-        self.testdata = self.prices[self.position-1:self.position + self.stepsize]
-        return self.inputs.values, self.testdata.values
 
-#st = sliding_trainer(prices["Close"],10,50)
-#[inputs,tests] = st.slidestep()
-#print(st.slidestep())
-#print(inputs)
-#print(tests)
+        for stock in self.prices:
+            train = np.hstack([train,np.array(stock['Close'][self.position-self.lookback:self.position].values)])
+        test = self.prices[0]['Close'][self.position:self.position + self.stepsize].values
 
-#inputs = st.slidestep()
-#print(inputs)
+        return train, test
 
-
-
-    

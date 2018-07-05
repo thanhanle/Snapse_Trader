@@ -13,8 +13,8 @@ import numpy
 import pandas as pd
 
 
-prices = [pd.read_csv('QQQ.csv')[:-500],pd.read_csv('EWY.csv')[:-500],pd.read_csv('USO.csv')[:-500]]
-test_prices = [pd.read_csv('QQQ.csv')[-500:],pd.read_csv('EWY.csv')[-500:],pd.read_csv('USO.csv')[-500:]]
+prices = [pd.read_csv('EWY.csv')[:-500],pd.read_csv('QQQ.csv')[:-500],pd.read_csv('USO.csv')[:-500]]
+test_prices = [pd.read_csv('EWY.csv')[-500:],pd.read_csv('QQQ.csv')[-500:],pd.read_csv('USO.csv')[-500:]]
 
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
@@ -24,8 +24,8 @@ def eval_genomes(genomes, config):
 def eval_genome(genome, config):
     #net = neat.nn.FeedForwardNetwork.create(genome, config)
     net = neat.nn.RecurrentNetwork.create(genome, config)
-    #fittness = evaluation(net,prices[:-700])
-    fittness = randeval(net,prices)
+    fittness = evaluation(net,prices,False)
+    #fittness = randeval(net,prices)
     return fittness
 
 def randeval(net,prices):
@@ -35,10 +35,11 @@ def randeval(net,prices):
     cash = 10000
     portfolio = 0
     total = cash + portfolio
-    for i in range(10):
+    for i in range(1):
         inputs,tests = st.random_train()
         output = net.activate(inputs)
-        if output[0] >= .50:
+        #print(output)
+        if output[0] >= .5:
             portfolio = total  #*output[0]
             cash = total - portfolio
         else:
@@ -51,9 +52,9 @@ def randeval(net,prices):
     fittness = total
     return fittness
 
-# For normal use!!! Don't edit!!
-def evaluation(net,prices):
-    st = train_window.sliding_trainer(prices,10,50)
+
+def evaluation(net,prices,show):
+    st = train_window.sliding_trainer(prices,10,100)
     inputs,tests = [],[]
     startingcash = 10000
     cash = 10000
@@ -61,12 +62,15 @@ def evaluation(net,prices):
     total = cash + portfolio
     while inputs != "done":
         inputs,tests = st.slidestep()
+        #print(inputs)
         if inputs != "done":
             output = net.activate(inputs)
+            #if show == True:
+            #    print(output)
         else:
             break
-        if output[0] >= .50:
-            portfolio = total*output[0]
+        if output[0] >= .5:
+            portfolio = total #*output[0]
             cash = total - portfolio
         else:
             cash = total
@@ -74,6 +78,8 @@ def evaluation(net,prices):
         delta = portfolio * ((tests[-1]-tests[0])/tests[0])
         #print(delta)
         total += delta
+        if show == True:
+            print(output, delta)
         cash = total
         portfolio = 0
     fittness = total
@@ -112,7 +118,7 @@ def run(config_file):
     visualize.draw_net(config, winner, True, node_names=node_names)
     visualize.plot_stats(stats, ylog=False, view=True)
     visualize.plot_species(stats, view=True)
-    print(randeval(winner_net,test_prices))
+    print(evaluation(winner_net,test_prices,True))
 
     #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-4')
     #p.run(eval_genomes, 10)
